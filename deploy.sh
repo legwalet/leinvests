@@ -27,7 +27,7 @@ fi
 
 # Deploy to Netlify
 echo -e "${BLUE}📤 Deploying to Netlify...${NC}"
-if ! netlify deploy --prod; then
+if ! netlify deploy --prod --dir=dist; then
     echo -e "${RED}❌ Deployment failed. Please check your Netlify configuration.${NC}"
     exit 1
 fi

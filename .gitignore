@@ -14,6 +14,9 @@ build
 .DS_Store
 .env
 .env.local
+.env.development
+.env.production
+.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -34,7 +37,20 @@ yarn-error.log*
 *.sw?
 
 # Local Netlify folder
-.netlify 
+.netlify
 node_modules
 node_modules
 node_modules
+
+# Functions build output
+functions/**/*.js
+
+# Environment
+.env
++.env.*
+!.env.example
+
+# Images
+public/images/**/*.jpg
+public/images/**/*.png
+!public/images/README.md

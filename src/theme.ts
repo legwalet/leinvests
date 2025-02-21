@@ -3,12 +3,10 @@ import { createTheme } from '@mui/material';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#2D3047', // Deep blue-grey
-      light: '#484D6D',
+      main: '#1976d2',
     },
     secondary: {
-      main: '#EF8354', // Coral orange
-      light: '#F2A07B',
+      main: '#dc004e',
     },
     background: {
       default: '#FFFFFF',
@@ -16,14 +14,17 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
     h1: {
       fontSize: '2.5rem',
       fontWeight: 600,
     },
     h2: {
       fontSize: '2rem',
-      fontWeight: 500,
+      fontWeight: 600,
+    },
+    h6: {
+      fontWeight: 600,
     },
     body1: {
       fontSize: '1rem',
@@ -34,9 +35,16 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
           textTransform: 'none',
-          padding: '8px 24px',
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#fff',
+          color: '#000',
         },
       },
     },

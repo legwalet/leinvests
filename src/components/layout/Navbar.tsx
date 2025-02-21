@@ -1,96 +1,171 @@
 import { useState } from 'react';
-import { 
-  AppBar, 
-  Toolbar, 
-  Button, 
-  Box, 
-  IconButton, 
-  Drawer, 
-  List, 
-  ListItem, 
-  ListItemText,
-  useTheme,
-  useMediaQuery 
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+  Badge,
 } from '@mui/material';
-import { Menu as MenuIcon } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { ShoppingCart as CartIcon, Menu as MenuIcon } from '@mui/icons-material';
+import { useNavigate, Link } from 'react-router-dom';
+import { useUser } from '../../contexts/UserContext';
+import { useCart } from '../../contexts/CartContext';
 
 const Navbar = () => {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
+  const { user, signOut, isAdmin } = useUser();
+  const { cartItems } = useCart();
 
-  const menuItems = [
-    { text: 'Home', path: '/' },
-    { text: 'Services', path: '/services' },
-    { text: 'Dashboard', path: '/dashboard' },
-    { text: 'Customer Portal', path: '/customer-portal' },
-  ];
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    handleCloseNavMenu();
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
-    <AppBar position="sticky" color="default" elevation={0}>
-      <Toolbar>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <Box component="img" src="/logo.png" alt="Logo" sx={{ height: 40 }} />
-          </Link>
-        </motion.div>
-
-        {isMobile ? (
-          <IconButton
-            edge="end"
+    <AppBar position="static">
+      <Container maxWidth="lg">
+        <Toolbar disableGutters>
+          <Button
+            component={Link}
+            to="/"
             color="inherit"
-            aria-label="menu"
-            onClick={() => setMobileOpen(true)}
-            sx={{ ml: 'auto' }}
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              textDecoration: 'none',
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-        ) : (
-          <Box sx={{ ml: 'auto', display: 'flex', gap: 2 }}>
-            {menuItems.map((item) => (
-              <Button
-                key={item.text}
-                component={Link}
-                to={item.path}
-                color="inherit"
-                sx={{ 
-                  '&:hover': {
-                    backgroundColor: 'rgba(0,0,0,0.04)',
-                  }
-                }}
-              >
-                {item.text}
-              </Button>
-            ))}
-          </Box>
-        )}
+            PRINT DESIGN STUDIO
+          </Button>
 
-        <Drawer
-          anchor="right"
-          open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
-        >
-          <List sx={{ width: 250 }}>
-            {menuItems.map((item) => (
-              <ListItem 
-                button 
-                key={item.text}
-                component={Link}
-                to={item.path}
-                onClick={() => setMobileOpen(false)}
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'block', md: 'none' },
+              }}
+            >
+              <MenuItem onClick={() => handleNavigate('/services')}>
+                <Typography textAlign="center">Services</Typography>
+              </MenuItem>
+              {isAdmin && (
+                <MenuItem onClick={() => handleNavigate('/admin/dashboard')}>
+                  <Typography textAlign="center">Admin Dashboard</Typography>
+                </MenuItem>
+              )}
+            </Menu>
+          </Box>
+
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <Button
+              onClick={() => handleNavigate('/services')}
+              sx={{ my: 2, color: 'inherit', display: 'block' }}
+            >
+              Services
+            </Button>
+            {isAdmin && (
+              <Button
+                onClick={() => handleNavigate('/admin/dashboard')}
+                sx={{ my: 2, color: 'inherit', display: 'block' }}
               >
-                <ListItemText primary={item.text} />
-              </ListItem>
-            ))}
-          </List>
-        </Drawer>
-      </Toolbar>
+                Admin Dashboard
+              </Button>
+            )}
+          </Box>
+
+          <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center', gap: 2 }}>
+            <IconButton
+              size="large"
+              aria-label="show cart items"
+              color="inherit"
+              onClick={() => navigate('/cart')}
+            >
+              <Badge badgeContent={cartItems.length} color="error">
+                <CartIcon />
+              </Badge>
+            </IconButton>
+
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt={user?.displayName || 'User'} src={user?.photoURL || ''} />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              <MenuItem onClick={handleLogout}>
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Container>
     </AppBar>
   );
 };
