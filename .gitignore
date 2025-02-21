@@ -51,6 +51,6 @@ functions/**/*.js
 !.env.example
 
 # Images
-public/images/**/*.jpg
-public/images/**/*.png
-!public/images/README.md
+#public/images/**/*.jpg
+#public/images/**/*.png
+#!public/images/README.md
