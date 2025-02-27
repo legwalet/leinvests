@@ -1,130 +1,120 @@
-import { Box, Container, Typography, Grid, Paper, Button } from '@mui/material';
+import { Box, Grid, Paper, Typography, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../../contexts/UserContext';
 import { motion } from 'framer-motion';
 
 const AdminHome = () => {
-  const { user } = useUser();
   const navigate = useNavigate();
 
+  const menuItems = [
+    {
+      title: 'Services',
+      description: 'Browse our printing and design services',
+      path: '/services',
+      color: '#1976d2'
+    },
+    {
+      title: 'Orders',
+      description: 'View and manage orders',
+      path: '/admin/dashboard',
+      color: '#2e7d32'
+    },
+    {
+      title: 'Inventory',
+      description: 'Manage product inventory',
+      path: '/admin/inventory',
+      color: '#ed6c02'
+    }
+  ];
+
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ my: 4 }}>
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundImage: 'url(/images/background.jpg)', // Make sure this image exists
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        pt: { xs: 4, sm: 8 },
+        pb: { xs: 6, sm: 12 }
+      }}
+    >
+      <Container maxWidth="lg">
+        <Typography
+          variant="h2"
+          align="center"
+          sx={{
+            mb: { xs: 4, sm: 6 },
+            color: 'white',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+            fontSize: { xs: '2rem', sm: '3rem', md: '3.75rem' }
+          }}
         >
-          <Typography variant="h3" component="h1" gutterBottom align="center">
-            Welcome to Print Design Studio
-          </Typography>
-          <Typography variant="h6" align="center" color="text.secondary" paragraph>
-            Admin Dashboard & Management System
-          </Typography>
-        </motion.div>
+          Welcome to Print & Design Studio
+        </Typography>
 
-        <Grid container spacing={4} sx={{ mt: 4 }}>
-          <Grid item xs={12} md={6} lg={4}>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <Paper
-                sx={{
-                  p: 3,
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
+        <Grid 
+          container 
+          spacing={{ xs: 2, sm: 3, md: 4 }} 
+          justifyContent="center"
+          sx={{ px: { xs: 2, sm: 0 } }}
+        >
+          {menuItems.map((item) => (
+            <Grid item xs={12} sm={6} md={4} key={item.title}>
+              <motion.div
+                whileHover={{ 
+                  scale: 1.05,
+                  transition: { duration: 0.2 }
                 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Typography variant="h5" component="h2" gutterBottom>
-                  Services Management
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  View and manage all print design services
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate('/services')}
+                <Paper
+                  onClick={() => navigate(item.path)}
+                  sx={{
+                    height: { xs: '200px', sm: '250px' },
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    p: 3,
+                    cursor: 'pointer',
+                    background: `linear-gradient(135deg, ${item.color}80, ${item.color})`,
+                    color: 'white',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      boxShadow: `0 8px 24px ${item.color}40`,
+                      transform: 'translateY(-4px)',
+                    },
+                    borderRadius: 4,
+                    textAlign: 'center'
+                  }}
                 >
-                  Manage Services
-                </Button>
-              </Paper>
-            </motion.div>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Paper
-                sx={{
-                  p: 3,
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                }}
-              >
-                <Typography variant="h5" component="h2" gutterBottom>
-                  Orders & Cart
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  View and manage customer orders
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate('/cart')}
-                >
-                  View Orders
-                </Button>
-              </Paper>
-            </motion.div>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <Paper
-                sx={{
-                  p: 3,
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                }}
-              >
-                <Typography variant="h5" component="h2" gutterBottom>
-                  Admin Dashboard
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  Access advanced admin features
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate('/admin/dashboard')}
-                >
-                  Go to Dashboard
-                </Button>
-              </Paper>
-            </motion.div>
-          </Grid>
+                  <Typography 
+                    variant="h4" 
+                    component="h2" 
+                    gutterBottom
+                    sx={{
+                      fontSize: { xs: '1.5rem', sm: '2rem' },
+                      fontWeight: 600
+                    }}
+                  >
+                    {item.title}
+                  </Typography>
+                  <Typography 
+                    variant="body1"
+                    sx={{
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                      opacity: 0.9
+                    }}
+                  >
+                    {item.description}
+                  </Typography>
+                </Paper>
+              </motion.div>
+            </Grid>
+          ))}
         </Grid>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 

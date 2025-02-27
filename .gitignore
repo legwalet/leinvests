@@ -36,21 +36,15 @@ yarn-error.log*
 *.sln
 *.sw?
 
-# Local Netlify folder
-.netlify
-node_modules
-node_modules
-node_modules
-
-# Functions build output
-functions/**/*.js
-
-# Environment
+# Local env files
 .env
-+.env.*
+.env.*
 !.env.example
 
 # Images
 #public/images/**/*.jpg
 #public/images/**/*.png
 #!public/images/README.md
+
+# Local Netlify folder
+.netlify

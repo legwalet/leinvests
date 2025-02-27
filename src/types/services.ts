@@ -37,10 +37,12 @@ export interface Product {
 
 export interface CartItem {
   productId: string;
+  name: string;
   quantity: number;
+  totalPrice: number;
+  imageUrl: string;
   selectedColor?: string;
   selectedSize?: string;
-  totalPrice: number;
 }
 
 export interface ServiceCategory {
@@ -52,11 +54,19 @@ export interface ServiceCategory {
 }
 
 export interface Order {
-  id: string;
+  id?: string;
   customerId: string;
+  customerDetails: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    notes?: string;
+  };
   items: CartItem[];
   status: 'pending' | 'processing' | 'completed' | 'cancelled';
   totalAmount: number;
+  pickupDate: string;
   createdAt: Date;
   updatedAt: Date;
 }

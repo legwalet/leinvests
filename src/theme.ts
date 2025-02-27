@@ -31,12 +31,36 @@ const theme = createTheme({
       lineHeight: 1.7,
     },
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1920,
+    },
+  },
   components: {
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          paddingLeft: {
+            xs: 8,
+            sm: 16,
+          },
+          paddingRight: {
+            xs: 8,
+            sm: 16,
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
           textTransform: 'none',
           borderRadius: 8,
+          whiteSpace: 'nowrap',
         },
       },
     },
@@ -46,6 +70,12 @@ const theme = createTheme({
           backgroundColor: '#fff',
           color: '#000',
         },
+      },
+    },
+    MuiDialog: {
+      defaultProps: {
+        fullWidth: true,
+        maxWidth: 'sm',
       },
     },
   },

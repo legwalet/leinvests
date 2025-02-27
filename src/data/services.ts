@@ -47,7 +47,7 @@ export const services: ServiceCategory[] = [
         description: 'Eye-catching social media graphics and templates for your brand',
         imageUrl: '/images/services/social-media.jpg',
         category: 'graphic-design',
-        displayPrice: 'From $199/month'
+        displayPrice: 'From R199/month'
       }
     ]
   },
@@ -84,7 +84,7 @@ export const services: ServiceCategory[] = [
         description: 'Wind-resistant mesh banners ideal for construction sites',
         imageUrl: '/images/services/mesh-banners.jpg',
         category: 'banners',
-        displayPrice: 'From $10.99/sqft'
+        displayPrice: 'From R10.99/sqft'
       },
       {
         id: 'pull-up-banners',
@@ -92,7 +92,7 @@ export const services: ServiceCategory[] = [
         description: 'Portable retractable banners perfect for trade shows and presentations',
         imageUrl: '/images/services/pull-up-banners.jpg',
         category: 'banners',
-        displayPrice: 'From $149.00',
+        displayPrice: 'From R149.00',
         dimensions: '33" x 78"'
       }
     ]
@@ -109,7 +109,7 @@ export const services: ServiceCategory[] = [
         description: 'High-shine finish that enhances colors and provides protection',
         imageUrl: '/images/services/gloss-lamination.jpg',
         category: 'lamination',
-        displayPrice: 'From $2.99/sheet',
+        displayPrice: 'From R2.99/sheet',
         dimensions: 'Up to A0 size'
       },
       {
@@ -118,7 +118,7 @@ export const services: ServiceCategory[] = [
         description: 'Non-reflective finish perfect for professional documents',
         imageUrl: '/images/services/matte-lamination.jpg',
         category: 'lamination',
-        displayPrice: 'From $2.99/sheet',
+        displayPrice: 'From R2.99/sheet',
         dimensions: 'Up to A0 size'
       }
     ]
@@ -135,7 +135,7 @@ export const services: ServiceCategory[] = [
         description: 'Professional document printing in color or black & white',
         imageUrl: '/images/services/document-printing.jpg',
         category: 'digital-printing',
-        displayPrice: 'From $0.10/page',
+        displayPrice: 'From R0.10/page',
         dimensions: 'A4, A3, A2'
       },
       {
@@ -144,7 +144,7 @@ export const services: ServiceCategory[] = [
         description: 'High-resolution photo printing on premium paper',
         imageUrl: '/images/services/photo-printing.jpg',
         category: 'digital-printing',
-        price: 'From $0.99/print',
+        price: 'From R0.99/print',
         dimensions: 'Multiple sizes available'
       },
       {
@@ -170,7 +170,7 @@ export const services: ServiceCategory[] = [
         description: 'High-quality posters on premium paper',
         imageUrl: '/images/services/standard-posters.jpg',
         category: 'posters',
-        price: 'From $19.99',
+        price: 'From R19.99',
         dimensions: 'A3, A2, A1, A0'
       },
       {
@@ -179,7 +179,7 @@ export const services: ServiceCategory[] = [
         description: 'Professional photo enlargements on photo paper',
         imageUrl: '/images/services/photo-posters.jpg',
         category: 'posters',
-        price: 'From $24.99',
+        price: 'From R24.99',
         dimensions: 'Multiple sizes available'
       }
     ]
@@ -217,7 +217,7 @@ export const services: ServiceCategory[] = [
         description: 'Luxury flyers with special finishes',
         imageUrl: '/images/services/premium-flyers.jpg',
         category: 'flyers',
-        price: 'From $79.99/500',
+        price: 'From R79.99/500',
         dimensions: 'A6, A5, A4'
       }
     ]
@@ -234,7 +234,7 @@ export const services: ServiceCategory[] = [
         description: 'Tall, eye-catching flags perfect for events',
         imageUrl: '/images/services/feather-flags.jpg',
         category: 'flags',
-        price: 'From $129',
+        price: 'From R129',
         dimensions: '2.5m, 3.5m, 4.5m'
       },
       {
@@ -243,7 +243,7 @@ export const services: ServiceCategory[] = [
         description: 'Distinctive teardrop-shaped flags',
         imageUrl: '/images/services/teardrop-flags.jpg',
         category: 'flags',
-        price: 'From $139',
+        price: 'From R139',
         dimensions: '2.5m, 3.5m, 4.5m'
       }
     ]
@@ -277,7 +277,7 @@ export const services: ServiceCategory[] = [
         description: 'Luxury cards with special finishes (Spot UV, Gold Foil, etc.)',
         imageUrl: '/images/services/premium-cards.jpg',
         category: 'business-cards',
-        price: 'From $79.99/500',
+        price: 'From R79.99/500',
         dimensions: '90x55mm'
       },
       {
@@ -286,7 +286,7 @@ export const services: ServiceCategory[] = [
         description: 'Unique square-format business cards',
         imageUrl: '/images/services/square-cards.jpg',
         category: 'business-cards',
-        price: 'From $59.99/500',
+        price: 'From R59.99/500',
         dimensions: '55x55mm'
       }
     ]

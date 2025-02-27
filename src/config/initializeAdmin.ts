@@ -1,6 +1,5 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebase';
-import { adminService } from '../services/adminService';
 
 export const initializeAdmin = async () => {
   try {

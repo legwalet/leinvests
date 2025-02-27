@@ -23,20 +23,23 @@ interface ProductDetailModalProps {
 }
 
 const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps) => {
+  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
-  const { addToCart } = useCart();
 
   if (!product) return null;
 
   const handleAddToCart = () => {
+    const totalPrice = (product?.basePrice || 0) * quantity;
     addToCart({
       productId: product.id,
+      name: product.name,
       quantity,
+      totalPrice,
+      imageUrl: product.imageUrl,
       selectedColor: selectedColor || undefined,
       selectedSize: selectedSize || undefined,
-      totalPrice: product.basePrice * quantity,
     });
     onClose();
   };
@@ -79,10 +82,10 @@ const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps)
               {product.description}
             </Typography>
             <Typography variant="h6" gutterBottom>
-              ${product.basePrice.toFixed(2)}
+              R{product?.basePrice?.toFixed(2) || 'N/A'}
             </Typography>
 
-            {product.customization.hasColor && (
+            {product?.customization?.hasColor && (
               <FormControl fullWidth margin="normal">
                 <InputLabel>Color</InputLabel>
                 <Select
@@ -90,7 +93,7 @@ const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps)
                   onChange={(e) => setSelectedColor(e.target.value)}
                   label="Color"
                 >
-                  {product.customization.colorOptions.map((color) => (
+                  {product?.customization?.colorOptions?.map((color) => (
                     <MenuItem key={color} value={color}>
                       {color}
                     </MenuItem>
@@ -99,7 +102,7 @@ const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps)
               </FormControl>
             )}
 
-            {product.customization.hasSizes && (
+            {product?.customization?.hasSizes && (
               <FormControl fullWidth margin="normal">
                 <InputLabel>Size</InputLabel>
                 <Select
@@ -107,7 +110,7 @@ const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps)
                   onChange={(e) => setSelectedSize(e.target.value)}
                   label="Size"
                 >
-                  {product.customization.sizes.map((size) => (
+                  {product?.customization?.sizes?.map((size) => (
                     <MenuItem key={size.id} value={size.id}>
                       {size.name} ({size.dimensions})
                     </MenuItem>
@@ -130,8 +133,8 @@ const ProductDetailModal = ({ product, open, onClose }: ProductDetailModalProps)
               variant="contained"
               color="primary"
               fullWidth
-              size="large"
               onClick={handleAddToCart}
+              size="large"
               sx={{ mt: 3 }}
             >
               Add to Cart

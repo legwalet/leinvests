@@ -22,6 +22,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { adminService, AdminUser } from '../../services/adminService';
+import Orders from '../../components/admin/Orders';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -57,7 +58,7 @@ const AdminDashboard = () => {
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserRole, setNewUserRole] = useState<'admin' | 'editor'>('editor');
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
@@ -181,7 +182,12 @@ const AdminDashboard = () => {
 
           <TabPanel value={tabValue} index={0}>
             <Typography variant="h6">Orders Management</Typography>
-            {/* Orders table will go here */}
+            <Box sx={{ mt: 4 }}>
+              <Typography variant="h5" gutterBottom>
+                Recent Orders
+              </Typography>
+              <Orders />
+            </Box>
           </TabPanel>
 
           <TabPanel value={tabValue} index={1}>

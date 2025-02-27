@@ -1,135 +1,77 @@
+import { useState } from 'react';
 import {
-  Box,
   Container,
   Typography,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  IconButton,
+  Box,
   Button,
-  TextField
+  Divider,
+  Alert,
 } from '@mui/material';
-import { Delete as DeleteIcon } from '@mui/icons-material';
 import { useCart } from '../contexts/CartContext';
-import { motion } from 'framer-motion';
+import CartItem from '../components/cart/CartItem';
 import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
-  const { cartItems, removeFromCart, updateQuantity, total } = useCart();
+  const { cartItems, total, clearCart } = useCart();
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   if (cartItems.length === 0) {
     return (
-      <Container maxWidth="lg">
-        <Box sx={{ my: 4, textAlign: 'center' }}>
-          <Typography variant="h5" gutterBottom>
-            Your cart is empty
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => navigate('/services')}
-            sx={{ mt: 2 }}
-          >
-            Browse Services
-          </Button>
-        </Box>
+      <Container maxWidth="md" sx={{ my: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          Your Cart
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Your cart is empty. Start shopping to add items to your cart.
+        </Typography>
       </Container>
     );
   }
 
   return (
-    <Container maxWidth="lg">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Box sx={{ my: 4 }}>
-          <Typography variant="h4" gutterBottom>
-            Shopping Cart
-          </Typography>
+    <Container maxWidth="md" sx={{ my: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Your Cart
+      </Typography>
 
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Product</TableCell>
-                  <TableCell>Options</TableCell>
-                  <TableCell align="right">Quantity</TableCell>
-                  <TableCell align="right">Price</TableCell>
-                  <TableCell align="right">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {cartItems.map((item) => (
-                  <TableRow key={item.productId}>
-                    <TableCell>{item.productId}</TableCell>
-                    <TableCell>
-                      {item.selectedColor && `Color: ${item.selectedColor}`}
-                      {item.selectedSize && `, Size: ${item.selectedSize}`}
-                    </TableCell>
-                    <TableCell align="right">
-                      <TextField
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) => {
-                          const value = parseInt(e.target.value);
-                          if (value > 0) {
-                            updateQuantity(item.productId, value);
-                          }
-                        }}
-                        size="small"
-                        sx={{ width: 80 }}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      ${item.totalPrice.toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">
-                      <IconButton
-                        onClick={() => removeFromCart(item.productId)}
-                        color="error"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                <TableRow>
-                  <TableCell colSpan={3} align="right">
-                    <Typography variant="h6">Total:</Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography variant="h6">${total.toFixed(2)}</Typography>
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
 
-          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-            <Button
-              variant="outlined"
-              onClick={() => navigate('/services')}
-            >
-              Continue Shopping
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate('/checkout')}
-            >
-              Proceed to Checkout
-            </Button>
-          </Box>
+      <Box sx={{ mb: 4 }}>
+        {cartItems.map((item) => (
+          <CartItem key={item.productId} item={item} />
+        ))}
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h5">
+          Total: R{total.toFixed(2)}
+        </Typography>
+        <Box>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={clearCart}
+            sx={{ mr: 2 }}
+          >
+            Clear Cart
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate('/checkout')}
+            disabled={cartItems.length === 0}
+          >
+            Proceed to Checkout
+          </Button>
         </Box>
-      </motion.div>
+      </Box>
     </Container>
   );
 };

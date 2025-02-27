@@ -7,7 +7,6 @@ import {
   Box,
   TextField,
   Button,
-  Typography,
   Alert,
   InputAdornment,
   IconButton,
@@ -41,11 +40,10 @@ const Auth = () => {
   const [tab, setTab] = useState(0);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp, user } = useUser();
+  const { signIn, user } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,7 +61,8 @@ const Auth = () => {
       if (tab === 0) {
         await signIn(email, password);
       } else {
-        await signUp(email, password, name);
+        setError('Registration is currently disabled');
+        return;
       }
       navigate('/services');
     } catch (err: any) {
@@ -92,11 +91,11 @@ const Auth = () => {
           <Paper elevation={3} sx={{ width: '100%', mt: 3 }}>
             <Tabs
               value={tab}
-              onChange={(e, newValue) => setTab(newValue)}
+              onChange={(_, newValue) => setTab(newValue)}
               variant="fullWidth"
             >
               <Tab label="Login" />
-              <Tab label="Register" />
+              <Tab label="Register" disabled />
             </Tabs>
 
             {error && (
@@ -106,7 +105,7 @@ const Auth = () => {
             )}
 
             <TabPanel value={tab} index={0}>
-              <Box component="form" onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit}>
                 <TextField
                   margin="normal"
                   required
@@ -123,6 +122,7 @@ const Auth = () => {
                   fullWidth
                   label="Password"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   InputProps={{
@@ -145,62 +145,9 @@ const Auth = () => {
                   sx={{ mt: 3, mb: 2 }}
                   disabled={loading}
                 >
-                  Sign In
+                  {loading ? 'Signing in...' : 'Sign In'}
                 </Button>
-              </Box>
-            </TabPanel>
-
-            <TabPanel value={tab} index={1}>
-              <Box component="form" onSubmit={handleSubmit}>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  label="Full Name"
-                  autoFocus
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  label="Email Address"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                  disabled={loading}
-                >
-                  Sign Up
-                </Button>
-              </Box>
+              </form>
             </TabPanel>
           </Paper>
         </Box>

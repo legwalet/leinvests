@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { CartItem } from '../types/services';
 
 interface CartContextType {
@@ -12,8 +12,19 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const CART_STORAGE_KEY = 'printStudio_cart';
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    // Load cart from localStorage on initial render
+    const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const addToCart = (item: CartItem) => {
     setCartItems(prev => {
@@ -37,7 +48,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCartItems(prev =>
       prev.map(item =>
         item.productId === productId
-          ? { ...item, quantity, totalPrice: (item.totalPrice / item.quantity) * quantity }
+          ? { ...item, quantity }
           : item
       )
     );
@@ -45,6 +56,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => {
     setCartItems([]);
+    localStorage.removeItem(CART_STORAGE_KEY);
   };
 
   const total = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);

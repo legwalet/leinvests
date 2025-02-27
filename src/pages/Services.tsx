@@ -6,7 +6,6 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia,
   Button,
   Alert,
   CircularProgress,
@@ -17,6 +16,7 @@ import ProductDetailModal from '../components/services/ProductDetailModal';
 import { Product } from '../types/services';
 import FallbackImage from '../components/common/FallbackImage';
 import { validateServices } from '../utils/verifyServices';
+import { inventoryService } from '../services/inventoryService';
 
 const Services = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -24,6 +24,8 @@ const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [availableProducts, setAvailableProducts] = useState<Set<string>>(new Set());
+  const [productStock, setProductStock] = useState<Record<string, number>>({});
 
   useEffect(() => {
     const loadServices = async () => {
@@ -41,6 +43,35 @@ const Services = () => {
 
     loadServices();
   }, []);
+
+  useEffect(() => {
+    const checkAvailability = async () => {
+      const available = new Set<string>();
+      for (const service of services) {
+        for (const product of service.products) {
+          const isAvailable = await inventoryService.checkStockAvailability(product.id);
+          if (isAvailable) available.add(product.id);
+        }
+      }
+      setAvailableProducts(available);
+    };
+    
+    checkAvailability();
+  }, []);
+
+  useEffect(() => {
+    const loadStockLevels = async () => {
+      const stockLevels: Record<string, number> = {};
+      for (const service of services) {
+        for (const product of service.products) {
+          stockLevels[product.id] = await inventoryService.getProductStock(product.id);
+        }
+      }
+      setProductStock(stockLevels);
+    };
+    
+    loadStockLevels();
+  }, [services]);
 
   const handleProductClick = (product: Product) => {
     try {
@@ -184,7 +215,8 @@ const Services = () => {
                             '&:hover': {
                               transform: 'scale(1.02)',
                               transition: 'transform 0.2s ease-in-out'
-                            }
+                            },
+                            opacity: availableProducts.has(product.id) ? 1 : 0.6
                           }}
                           onClick={() => handleProductClick(product)}
                         >
@@ -205,6 +237,14 @@ const Services = () => {
                             {product.dimensions && (
                               <Typography variant="body2" color="text.secondary">
                                 {product.dimensions}
+                              </Typography>
+                            )}
+                            <Typography variant="body2" color="text.secondary">
+                              Stock Available: {productStock[product.id] || 0}
+                            </Typography>
+                            {productStock[product.id] <= 0 && (
+                              <Typography color="error">
+                                Out of Stock
                               </Typography>
                             )}
                           </CardContent>

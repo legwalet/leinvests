@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+  const { currentUser: user, loading } = useAuth();
 
   if (loading) {
     return <LoadingSpinner />;
