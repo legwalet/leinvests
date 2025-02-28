@@ -28,7 +28,7 @@ import { db } from '../../config/firebase';
 import { orderService } from '../../services/orderService';
 import { useMediaQuery } from '@mui/material';
 
-const steps = ['Review Cart', 'Customer Details', 'Schedule Pickup', 'Confirm Order'];
+const steps = ['Shipping Information', 'Review Order', 'Complete'];
 
 interface CustomerDetails {
   name: string;
@@ -38,7 +38,9 @@ interface CustomerDetails {
   notes?: string;
 }
 
-export default function Checkout() {
+const Checkout = () => {
+  const navigate = useNavigate();
+  const { cartItems, total, clearCart } = useCart();
   const [activeStep, setActiveStep] = useState(0);
   const [customerDetails, setCustomerDetails] = useState<CustomerDetails>({
     name: '',
@@ -52,21 +54,43 @@ export default function Checkout() {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   
-  const { cartItems, total, clearCart } = useCart();
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width:600px)');
 
-  const handleNext = () => {
-    if (activeStep === steps.length - 1) {
-      handlePlaceOrder();
+  const handleNext = async () => {
+    if (activeStep === 1) {
+      try {
+        const orderData: Omit<Order, 'id'> = {
+          customerId: currentUser?.uid || 'guest',
+          customerDetails,
+          items: cartItems,
+          status: 'pending',
+          totalAmount: total,
+          pickupDate: pickupDate?.toISOString() || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+
+        const orderId = await orderService.createOrder(orderData);
+        setOrderId(orderId);
+        setOrderSuccess(true);
+        clearCart();
+        setActiveStep(activeStep + 1);
+      } catch (err) {
+        console.error('Error creating order:', err);
+        setError('Failed to create order. Please try again.');
+      }
     } else {
-      setActiveStep((prevStep) => prevStep + 1);
+      setActiveStep(activeStep + 1);
     }
   };
 
   const handleBack = () => {
-    setActiveStep((prevStep) => prevStep - 1);
+    setActiveStep(activeStep - 1);
+  };
+
+  const handleComplete = () => {
+    navigate('/');
   };
 
   const handleCustomerDetailsChange = (field: keyof CustomerDetails) => (
@@ -81,47 +105,11 @@ export default function Checkout() {
   const validateStep = () => {
     switch (activeStep) {
       case 0:
-        return cartItems.length > 0;
-      case 1:
         return customerDetails.name && customerDetails.email && customerDetails.phone && customerDetails.address;
-      case 2:
+      case 1:
         return pickupDate !== null;
       default:
         return true;
-    }
-  };
-
-  const handlePlaceOrder = async () => {
-    try {
-      if (!pickupDate) {
-        setError('Please select a pickup date');
-        return;
-      }
-
-      const orderData: Omit<Order, 'id'> = {
-        customerId: currentUser?.uid || 'guest',
-        customerDetails: {
-          name: customerDetails.name,
-          email: customerDetails.email,
-          phone: customerDetails.phone,
-          address: customerDetails.address,
-          notes: customerDetails.notes,
-        },
-        items: cartItems,
-        status: 'pending',
-        totalAmount: total,
-        pickupDate: pickupDate.toISOString(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      const orderId = await orderService.createOrder(orderData);
-      setOrderId(orderId);
-      setOrderSuccess(true);
-      clearCart();
-    } catch (err) {
-      console.error('Error placing order:', err);
-      setError(err instanceof Error ? err.message : 'Failed to place order. Please try again.');
     }
   };
 
@@ -129,165 +117,90 @@ export default function Checkout() {
     switch (step) {
       case 0:
         return (
-          <Box sx={{ width: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Review Your Cart
-            </Typography>
-            <Box sx={{ maxHeight: { xs: '50vh', sm: '60vh' }, overflowY: 'auto', pr: 1 }}>
-              {cartItems.map((item) => (
-                <Paper key={item.productId} sx={{ p: { xs: 1, sm: 2 }, mb: 2 }}>
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={4} sm={3}>
-                      <img 
-                        src={item.imageUrl} 
-                        alt={item.name} 
-                        style={{ 
-                          width: '100%',
-                          maxHeight: '80px',
-                          objectFit: 'contain'
-                        }} 
-                      />
-                    </Grid>
-                    <Grid item xs={8} sm={9}>
-                      <Typography 
-                        variant="subtitle1" 
-                        sx={{ 
-                          fontSize: { xs: '0.875rem', sm: '1rem' },
-                          fontWeight: 500 
-                        }}
-                      >
-                        {item.name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Quantity: {item.quantity}
-                      </Typography>
-                      {item.selectedSize && (
-                        <Typography variant="body2" color="text.secondary">
-                          Size: {item.selectedSize}
-                        </Typography>
-                      )}
-                      {item.selectedColor && (
-                        <Typography variant="body2" color="text.secondary">
-                          Color: {item.selectedColor}
-                        </Typography>
-                      )}
-                      <Typography variant="subtitle2" sx={{ mt: 1 }}>
-                        R{item.totalPrice.toFixed(2)}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </Paper>
-              ))}
-            </Box>
-            <Paper sx={{ p: 2, mt: 2 }}>
-              <Typography variant="h6">Total: R{total.toFixed(2)}</Typography>
-            </Paper>
-          </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                label="Full Name"
+                value={customerDetails.name}
+                onChange={handleCustomerDetailsChange('name')}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                label="Email"
+                type="email"
+                value={customerDetails.email}
+                onChange={handleCustomerDetailsChange('email')}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                label="Phone"
+                value={customerDetails.phone}
+                onChange={handleCustomerDetailsChange('phone')}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                label="Address"
+                multiline
+                rows={2}
+                value={customerDetails.address}
+                onChange={handleCustomerDetailsChange('address')}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Notes"
+                multiline
+                rows={2}
+                value={customerDetails.notes}
+                onChange={handleCustomerDetailsChange('notes')}
+              />
+            </Grid>
+          </Grid>
         );
-
       case 1:
         return (
-          <Box sx={{ width: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Customer Details
+          <Box>
+            <Typography variant="h6" gutterBottom>Order Summary</Typography>
+            {cartItems.map((item) => (
+              <Box key={item.productId} sx={{ mb: 2 }}>
+                <Typography>
+                  {item.name} x {item.quantity}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  R{item.totalPrice.toFixed(2)}
+                </Typography>
+              </Box>
+            ))}
+            <Typography variant="h6" sx={{ mt: 2 }}>
+              Total: R{total.toFixed(2)}
             </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  label="Full Name"
-                  value={customerDetails.name}
-                  onChange={handleCustomerDetailsChange('name')}
-                  size="small"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  label="Email"
-                  type="email"
-                  value={customerDetails.email}
-                  onChange={handleCustomerDetailsChange('email')}
-                  size="small"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  label="Phone"
-                  value={customerDetails.phone}
-                  onChange={handleCustomerDetailsChange('phone')}
-                  size="small"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  label="Address"
-                  value={customerDetails.address}
-                  onChange={handleCustomerDetailsChange('address')}
-                  size="small"
-                  multiline
-                  rows={2}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Additional Notes"
-                  multiline
-                  rows={3}
-                  value={customerDetails.notes}
-                  onChange={handleCustomerDetailsChange('notes')}
-                  size="small"
-                />
-              </Grid>
-            </Grid>
           </Box>
         );
-
       case 2:
         return (
-          <Box sx={{ 
-            width: '100%',
-            '& .MuiTextField-root': { width: '100%' }
-          }}>
+          <Box sx={{ textAlign: 'center' }}>
             <Typography variant="h6" gutterBottom>
-              Schedule Pickup
+              Thank you for your order!
             </Typography>
-            <DateTimePicker
-              label="Pickup Date and Time"
-              value={pickupDate ? dayjs(pickupDate) : null}
-              onChange={(newValue) => setPickupDate(newValue ? newValue.toDate() : null)}
-              minDateTime={dayjs()}
-              sx={{ width: '100%' }}
-            />
-          </Box>
-        );
-
-      case 3:
-        return (
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Order Summary
-            </Typography>
-            <Typography>Customer: {customerDetails.name}</Typography>
-            <Typography>Email: {customerDetails.email}</Typography>
-            <Typography>Phone: {customerDetails.phone}</Typography>
-            <Typography>Address: {customerDetails.address}</Typography>
-            <Typography>Pickup Date: {pickupDate?.toLocaleString()}</Typography>
-            <Typography variant="h6" sx={{ mt: 2 }}>
-              Total Amount: R{total.toFixed(2)}
+            <Typography>
+              We'll contact you soon about your order.
             </Typography>
           </Box>
         );
-
       default:
-        return 'Unknown step';
+        return null;
     }
   };
 
@@ -316,10 +229,10 @@ export default function Checkout() {
           </Typography>
           <Button
             variant="contained"
-            onClick={() => navigate('/')}
+            onClick={handleComplete}
             sx={{ mt: 3 }}
           >
-            Back to Home
+            Return Home
           </Button>
         </Box>
       </Dialog>
@@ -394,16 +307,28 @@ export default function Checkout() {
               Back
             </Button>
           )}
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            disabled={!validateStep()}
-            size={isMobile ? 'small' : 'medium'}
-          >
-            {activeStep === steps.length - 1 ? 'Place Order' : 'Next'}
-          </Button>
+          {activeStep === steps.length - 1 ? (
+            <Button
+              variant="contained"
+              onClick={handleComplete}
+              size={isMobile ? 'small' : 'medium'}
+            >
+              Return Home
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={handleNext}
+              disabled={!validateStep()}
+              size={isMobile ? 'small' : 'medium'}
+            >
+              {activeStep === steps.length - 2 ? 'Place Order' : 'Next'}
+            </Button>
+          )}
         </Box>
       </Paper>
     </Container>
   );
-} 
+};
+
+export default Checkout; 
