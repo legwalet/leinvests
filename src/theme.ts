@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
   palette: {
@@ -44,13 +44,13 @@ const theme = createTheme({
     MuiContainer: {
       styleOverrides: {
         root: {
-          paddingLeft: {
-            xs: 8,
-            sm: 16,
+          '@media (min-width:0px)': {
+            paddingLeft: '8px',
+            paddingRight: '8px',
           },
-          paddingRight: {
-            xs: 8,
-            sm: 16,
+          '@media (min-width:600px)': {
+            paddingLeft: '16px',
+            paddingRight: '16px',
           },
         },
       },
@@ -60,7 +60,6 @@ const theme = createTheme({
         root: {
           textTransform: 'none',
           borderRadius: 8,
-          whiteSpace: 'nowrap',
         },
       },
     },
@@ -76,6 +75,22 @@ const theme = createTheme({
       defaultProps: {
         fullWidth: true,
         maxWidth: 'sm',
+      },
+    },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          fontSize: '0.875rem',
+          backgroundColor: 'rgba(0, 0, 0, 0.87)',
+          padding: '8px 16px',
+        },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.2)',
+        },
       },
     },
   },

@@ -41,8 +41,14 @@ export interface CartItem {
   quantity: number;
   totalPrice: number;
   imageUrl: string;
+  selectedSize?: {
+    id: string;
+    name: string;
+    dimensions: string;
+  };
   selectedColor?: string;
-  selectedSize?: string;
+  hasDesign?: boolean;
+  designPrice?: number;
 }
 
 export interface ServiceCategory {

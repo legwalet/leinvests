@@ -75,6 +75,17 @@ const ClientManagement = () => {
     setSelectedClient(null);
   };
 
+  const handleEditClient = (client: Client) => {
+    setFormData({
+      name: client.name,
+      email: client.email,
+      phone: client.phone,
+      businessAddress: client.businessAddress,
+      notes: client.notes || ''
+    });
+    setSelectedClient(client);
+  };
+
   return (
     <Box>
       <Button
@@ -110,8 +121,7 @@ const ClientManagement = () => {
                 <TableCell>
                   <IconButton
                     onClick={() => {
-                      setSelectedClient(client);
-                      setFormData(client);
+                      handleEditClient(client);
                       setIsModalOpen(true);
                     }}
                   >

@@ -90,7 +90,7 @@ const CartDropdown = () => {
                           {item.quantity} × R{(item.totalPrice / item.quantity).toFixed(2)}
                         </Typography>
                         {item.selectedSize && (
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography variant="body2">
                             Size: {item.selectedSize.name}
                           </Typography>
                         )}

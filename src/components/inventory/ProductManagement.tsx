@@ -20,6 +20,7 @@ import {
   Select,
   MenuItem,
   Grid,
+  Typography,
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { Product } from '../../types/services';
@@ -102,6 +103,14 @@ const ProductManagement = () => {
     setSelectedProduct(null);
   };
 
+  const handleEditProduct = (product: Product) => {
+    setFormData({
+      ...product,
+      basePrice: product.basePrice || 0,
+    });
+    setSelectedProduct(product);
+  };
+
   return (
     <Box>
       <Button
@@ -139,8 +148,7 @@ const ProductManagement = () => {
                 <TableCell>
                   <IconButton
                     onClick={() => {
-                      setSelectedProduct(product);
-                      setFormData(product);
+                      handleEditProduct(product);
                       setIsModalOpen(true);
                     }}
                   >

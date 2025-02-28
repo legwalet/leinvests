@@ -46,7 +46,13 @@ const StockOrderModal = ({ open, onClose, onSubmit, currentStock }: StockOrderMo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSubmit(formData);
+    const now = new Date().toISOString();
+    const orderData = {
+      ...formData,
+      orderDate: now,
+      status: 'pending' as const
+    };
+    await onSubmit(orderData);
     onClose();
   };
 

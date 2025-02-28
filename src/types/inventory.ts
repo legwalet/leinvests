@@ -18,13 +18,24 @@ export interface Client {
   notes?: string;
 }
 
-export interface StockOrder {
+export interface Product {
   id: string;
+  name: string;
+  description: string;
+  category: string;
+  basePrice: number;
+  imageUrl: string;
+  dimensions: string;
+  isAvailable: boolean;
+}
+
+export interface StockOrder {
+  id?: string;
   productId: string;
   productName: string;
   quantity: number;
-  orderDate: string;
   supplier: string;
-  status: 'pending' | 'delivered' | 'cancelled';
   cost: number;
+  status: 'pending' | 'completed' | 'cancelled';
+  orderDate: string;
 } 
