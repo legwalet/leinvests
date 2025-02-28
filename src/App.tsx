@@ -12,6 +12,7 @@ import theme from './theme';
 import Checkout from './components/checkout/Checkout';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import OrderConfirmation from './pages/OrderConfirmation';
 
 // Lazy load components
 const Auth = lazy(() => import('./pages/Auth'));
@@ -74,6 +75,7 @@ function App() {
                         <Route path="/admin/dashboard" element={<AdminDashboard />} />
                         <Route path="/admin/inventory" element={<Inventory />} />
                         <Route path="/checkout" element={<Checkout />} />
+                        <Route path="/order-confirmation" element={<OrderConfirmation />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                       </Route>
                     </Routes>
